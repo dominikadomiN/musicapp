@@ -29,6 +29,6 @@ public class Song {
     @Column(name = "genre")
     private String genre;
     @Column(name = "year")
-    private String year;
+    private int year;
 
 }
