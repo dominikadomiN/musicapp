@@ -17,6 +17,9 @@ public class DefaultSongServiceTest {
     private static final Song SONG_ONE = createSong("All Night", "Beyonce", "Lemonade", "Pop", 2016);
     private static final Song SONG_ONE_WITH_ID = createSong(1L, "All Night", "Beyonce", "Lemonade", "Pop", 2016);
     private static final Song SONG_TWO_WITH_ID = createSong(2L, "Sorry", "Beyonce", "Lemonade", "Pop", 2016);
+    private static final Song SONG_THREE_WITH_ID = createSong(3L, "Better Off", "Ariana Grande", "Next", "Pop", 2019);
+    private static final Song SONG_FOUR_WITH_ID = createSong(4L, "All Night", "Ariana Grande", "Next", "Pop", 2019);
+    private static final Song SONG_FIVE_WITH_ID = createSong(5L, "Hello", "Travis", "123", "Rap", 2017);
 
     private DefaultSongService defaultSongService;
     private SongRepository songRepositoryMock;
@@ -41,18 +44,119 @@ public class DefaultSongServiceTest {
     }
 
     @Test
-    public void shouldGetSongs() {
+    public void shouldGetSongs_WithoutParams() {
         //given
         when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID));
         List<Song> expected = Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID);
 
         //when
-        List<Song> actual = defaultSongService.getSongs();
+        List<Song> actual = defaultSongService.getSongs(null, null, null, null, null);
 
         //then
         Mockito.verify(songRepositoryMock).findAll();
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldGetSongs_NameParam() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_ONE_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs("All Night", null, null, null, null);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetSongs_InterpreterParam() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID, SONG_THREE_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_THREE_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs(null, "Ariana Grande", null, null, null);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetSongs_AlbumParam() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID, SONG_THREE_WITH_ID, SONG_FOUR_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_THREE_WITH_ID, SONG_FOUR_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs(null, null, "Next", null, null);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetSongs_GenreParam() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_THREE_WITH_ID, SONG_FOUR_WITH_ID, SONG_FIVE_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_FIVE_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs(null, null, null, "Rap", null);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetSongs_YearParam() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_THREE_WITH_ID, SONG_FOUR_WITH_ID, SONG_FIVE_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_FIVE_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs(null, null, null, null, 2017);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetSongs_InterpreterAndAlbumParams() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID, SONG_THREE_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_ONE_WITH_ID, SONG_TWO_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs(null, "Beyonce", "Lemonade", null, null);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    public void shouldGetSongs_GenreAndYearParams() {
+        //given
+        when(songRepositoryMock.findAll()).thenReturn(Arrays.asList(SONG_THREE_WITH_ID, SONG_FOUR_WITH_ID, SONG_FIVE_WITH_ID));
+        List<Song> expected = Arrays.asList(SONG_FIVE_WITH_ID);
+
+        //when
+        List<Song> actual = defaultSongService.getSongs(null, null, null, "Rap", 2017);
+
+        //then
+        Mockito.verify(songRepositoryMock).findAll();
+        assertEquals(expected, actual);
+
+    }
+
 
     @Test
     public void findSongById_shouldReturnSong() {
