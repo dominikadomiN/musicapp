@@ -7,6 +7,10 @@ import java.util.List;
 public interface SongService {
 
     long addSong(Song song);
+
     List<Song> getSongs();
+
     Song findSongById(long id);
+
+    void deleteSongById(long id);
 }

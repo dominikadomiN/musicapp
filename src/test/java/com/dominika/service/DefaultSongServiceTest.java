@@ -48,6 +48,7 @@ public class DefaultSongServiceTest {
 
         //when
         List<Song> actual = defaultSongService.getSongs();
+
         //then
         Mockito.verify(songRepositoryMock).findAll();
         assertEquals(expected, actual);
@@ -57,8 +58,10 @@ public class DefaultSongServiceTest {
     public void findSongById_shouldReturnSong() {
         //given
         when(songRepositoryMock.findById(1L)).thenReturn(Optional.of(SONG_ONE_WITH_ID));
+
         //when
         Song actual = defaultSongService.findSongById(1L);
+
         //then
         Mockito.verify(songRepositoryMock).findById(1L);
         assertEquals(SONG_ONE_WITH_ID, actual);
@@ -71,6 +74,15 @@ public class DefaultSongServiceTest {
 
         //when
         defaultSongService.findSongById(3L);
+    }
+
+    @Test
+    public void deleteSongById_SoundDeleteSong() {
+        //when
+        defaultSongService.deleteSongById(2L);
+
+        //then
+        Mockito.verify(songRepositoryMock).deleteById(2L);
     }
 
     private static Song createSong(long id, String name, String interpreter, String album, String genre, int year) {
