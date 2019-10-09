@@ -1,7 +1,9 @@
 package com.dominika.controller;
 
 import com.dominika.model.Song;
+import com.dominika.model.SongsResponse;
 import com.dominika.service.DefaultSongService;
+import com.dominika.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +20,10 @@ import java.util.List;
 @RequestMapping(value = "/song")
 public class SongController {
 
-    private DefaultSongService songService;
+    private final SongService songService;
 
     @Autowired
-    public SongController(DefaultSongService songService) {
+    public SongController(SongService songService) {
         this.songService = songService;
     }
 
@@ -31,12 +33,13 @@ public class SongController {
     }
 
     @GetMapping(value = "/show")
-    public List<Song> showSongs(@RequestParam(required = false) String name,
-                                @RequestParam(required = false) String interpreter,
-                                @RequestParam(required = false) String album,
-                                @RequestParam(required = false) String genre,
-                                @RequestParam(required = false) Integer year) {
-        return songService.getSongs(name, interpreter, album, genre, year);
+    public SongsResponse showSongs(@RequestParam(required = false) String name,
+                                   @RequestParam(required = false) String interpreter,
+                                   @RequestParam(required = false) String album,
+                                   @RequestParam(required = false) String genre,
+                                   @RequestParam(required = false) Integer year) {
+        List<Song> songs = songService.getSongs(name, interpreter, album, genre, year);
+        return mapSongsResponse(songs);
     }
 
     @GetMapping(value = "/show/{id}")
@@ -47,5 +50,12 @@ public class SongController {
     @DeleteMapping(value = "/delete/{id}")
     public void deleteSongById(@PathVariable long id) {
         songService.deleteSongById(id);
+    }
+
+    private SongsResponse mapSongsResponse(List<Song> songs) {
+        SongsResponse songsResponse = new SongsResponse();
+        songsResponse.setSongs(songs);
+        songsResponse.setTotal(songs.size());
+        return songsResponse;
     }
 }
