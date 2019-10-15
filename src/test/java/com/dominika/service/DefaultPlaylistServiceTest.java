@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +36,30 @@ public class DefaultPlaylistServiceTest {
         //then
         Mockito.verify(playlistRepositoryMock).save(PLAYLIST_ONE);
         assertEquals(1L, actual);
+
+    }
+
+    @Test
+    public void shouldGetPlaylistById() {
+        //given
+        when(playlistRepositoryMock.findById(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
+
+        //when
+        Playlist actual = defaultPlaylistService.findPlaylistById(1L);
+
+        //then
+        Mockito.verify(playlistRepositoryMock).findById(1L);
+        assertEquals(PLAYLIST_ONE_WITH_ID, actual);
+
+    }
+
+    @Test
+    public void shouldDeletePlaylistById() {
+        //when
+        defaultPlaylistService.deletePlaylistById(2L);
+
+        //then
+        Mockito.verify(playlistRepositoryMock).deleteById(2L);
 
     }
 

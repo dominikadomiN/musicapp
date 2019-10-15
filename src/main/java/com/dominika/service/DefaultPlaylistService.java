@@ -20,4 +20,15 @@ public class DefaultPlaylistService implements PlaylistService {
         Playlist savedPlaylist = playlistRepository.save(playlist);
         return savedPlaylist.getId();
     }
+
+    @Override
+    public Playlist findPlaylistById(long id) {
+        return playlistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("There is no such playlist with id = " + id));
+    }
+
+    @Override
+    public void deletePlaylistById(long id) {
+        playlistRepository.deleteById(id);
+    }
 }
