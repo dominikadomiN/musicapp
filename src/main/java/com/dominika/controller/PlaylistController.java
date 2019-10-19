@@ -1,6 +1,7 @@
 package com.dominika.controller;
 
 import com.dominika.model.Playlist;
+import com.dominika.model.PlaylistResponse;
 import com.dominika.service.PlaylistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,7 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/playlist")
@@ -37,4 +41,17 @@ public class PlaylistController {
         playlistService.deletePlaylistById(id);
     }
 
+    @GetMapping(value = "/show")
+    public PlaylistResponse showPlaylist(@RequestParam(required = false) String name) {
+
+        List<Playlist> playlists = playlistService.getPlaylists();
+        return mapPlaylistResponse(playlists);
+    }
+
+    private PlaylistResponse mapPlaylistResponse(List<Playlist> playlists) {
+        PlaylistResponse playlistResponse = new PlaylistResponse();
+        playlistResponse.setPlaylists(playlists);
+        playlistResponse.setTotal(playlists.size());
+        return playlistResponse;
+    }
 }

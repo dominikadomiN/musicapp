@@ -5,6 +5,9 @@ import com.dominika.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 @Service
 public class DefaultPlaylistService implements PlaylistService {
 
@@ -30,5 +33,11 @@ public class DefaultPlaylistService implements PlaylistService {
     @Override
     public void deletePlaylistById(long id) {
         playlistRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Playlist> getPlaylists() {
+        List<Playlist> allPlaylists = playlistRepository.findAll();
+        return allPlaylists;
     }
 }

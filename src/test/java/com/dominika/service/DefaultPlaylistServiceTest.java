@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -60,6 +62,21 @@ public class DefaultPlaylistServiceTest {
 
         //then
         Mockito.verify(playlistRepositoryMock).deleteById(2L);
+
+    }
+
+    @Test
+    public void shouldGetAllPlaylists(){
+        //given
+        when(playlistRepositoryMock.findAll()).thenReturn(Arrays.asList(PLAYLIST_ONE_WITH_ID));
+        List<Playlist> expected = Arrays.asList(PLAYLIST_ONE_WITH_ID);
+
+        //when
+        List<Playlist> actual = defaultPlaylistService.getPlaylists();
+
+        //then
+        Mockito.verify(playlistRepositoryMock).findAll();
+        assertEquals(expected,actual);
 
     }
 
