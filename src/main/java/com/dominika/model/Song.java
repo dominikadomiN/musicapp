@@ -30,5 +30,4 @@ public class Song {
     private String genre;
     @Column(name = "year")
     private int year;
-
 }

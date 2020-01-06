@@ -1,10 +1,12 @@
 package com.dominika.service;
 
 import com.dominika.model.Playlist;
+import com.dominika.model.Song;
 import com.dominika.repository.PlaylistRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import support.SongCreator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,12 @@ public class DefaultPlaylistServiceTest {
 
     private static final Playlist PLAYLIST_ONE = createPlaylist("Weekend");
     private static final Playlist PLAYLIST_ONE_WITH_ID = createPlaylist(1L, "Weekend");
+    private static final Song SONG_ONE = SongCreator.createSong("Hello", "Beyonce", "4x4",
+            "pop", 2016);
+    private static final Song SONG_TWO = SongCreator.createSong("Soldier", "Beyonce", "Destiny's Child",
+            "pop", 2008);
+    private static final Song SONG_THREE = SongCreator.createSong("Silent", "Beyonce", "Hello",
+            "pop", 2007);
 
     private DefaultPlaylistService defaultPlaylistService;
     private PlaylistRepository playlistRepositoryMock;
@@ -38,7 +46,6 @@ public class DefaultPlaylistServiceTest {
         //then
         Mockito.verify(playlistRepositoryMock).save(PLAYLIST_ONE);
         assertEquals(1L, actual);
-
     }
 
     @Test
@@ -52,7 +59,6 @@ public class DefaultPlaylistServiceTest {
         //then
         Mockito.verify(playlistRepositoryMock).findById(1L);
         assertEquals(PLAYLIST_ONE_WITH_ID, actual);
-
     }
 
     @Test
@@ -62,11 +68,10 @@ public class DefaultPlaylistServiceTest {
 
         //then
         Mockito.verify(playlistRepositoryMock).deleteById(2L);
-
     }
 
     @Test
-    public void shouldGetAllPlaylists(){
+    public void shouldGetAllPlaylists() {
         //given
         when(playlistRepositoryMock.findAll()).thenReturn(Arrays.asList(PLAYLIST_ONE_WITH_ID));
         List<Playlist> expected = Arrays.asList(PLAYLIST_ONE_WITH_ID);
@@ -76,8 +81,38 @@ public class DefaultPlaylistServiceTest {
 
         //then
         Mockito.verify(playlistRepositoryMock).findAll();
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
+    }
 
+    @Test
+    public void shouldAddSongsToPlaylist() {
+        //given
+        List<Song> songs = Arrays.asList(SONG_ONE, SONG_TWO, SONG_THREE);
+        Playlist playlist = new Playlist();
+        playlist.setId(1L);
+        playlist.setName("Weekend");
+        playlist.setSongs(songs);
+
+        when(playlistRepositoryMock.findById(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
+
+        //when
+        defaultPlaylistService.addSongsToPlaylist(1L, songs);
+
+        //then
+        Mockito.verify(playlistRepositoryMock).save(playlist);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldReturnRuntimeException_whenThereIsNoPlaylistWith2LId() {
+        //given
+        List<Song> songs = Arrays.asList(SONG_ONE, SONG_TWO, SONG_THREE);
+        when(playlistRepositoryMock.findById(2L)).thenReturn(Optional.empty());
+
+        //when
+        defaultPlaylistService.addSongsToPlaylist(2L, songs);
+
+        //then
+        Mockito.verify(playlistRepositoryMock, Mockito.never()).save(Mockito.any());
     }
 
     private static Playlist createPlaylist(String playlistName) {
@@ -94,5 +129,4 @@ public class DefaultPlaylistServiceTest {
 
         return playlist;
     }
-
 }

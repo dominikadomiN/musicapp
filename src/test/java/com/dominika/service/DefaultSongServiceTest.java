@@ -5,6 +5,7 @@ import com.dominika.repository.SongRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import support.SongCreator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,12 +15,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class DefaultSongServiceTest {
-    private static final Song SONG_ONE = createSong("All Night", "Beyonce", "Lemonade", "Pop", 2016);
-    private static final Song SONG_ONE_WITH_ID = createSong(1L, "All Night", "Beyonce", "Lemonade", "Pop", 2016);
-    private static final Song SONG_TWO_WITH_ID = createSong(2L, "Sorry", "Beyonce", "Lemonade", "Pop", 2016);
-    private static final Song SONG_THREE_WITH_ID = createSong(3L, "Better Off", "Ariana Grande", "Next", "Pop", 2019);
-    private static final Song SONG_FOUR_WITH_ID = createSong(4L, "All Night", "Ariana Grande", "Next", "Pop", 2019);
-    private static final Song SONG_FIVE_WITH_ID = createSong(5L, "Hello", "Travis", "123", "Rap", 2017);
+    private static final Song SONG_ONE = SongCreator.createSong("All Night", "Beyonce", "Lemonade", "Pop", 2016);
+    private static final Song SONG_ONE_WITH_ID = SongCreator.createSong(1L, "All Night", "Beyonce", "Lemonade", "Pop", 2016);
+    private static final Song SONG_TWO_WITH_ID = SongCreator.createSong(2L, "Sorry", "Beyonce", "Lemonade", "Pop", 2016);
+    private static final Song SONG_THREE_WITH_ID = SongCreator.createSong(3L, "Better Off", "Ariana Grande", "Next", "Pop", 2019);
+    private static final Song SONG_FOUR_WITH_ID = SongCreator.createSong(4L, "All Night", "Ariana Grande", "Next", "Pop", 2019);
+    private static final Song SONG_FIVE_WITH_ID = SongCreator.createSong(5L, "Hello", "Travis", "123", "Rap", 2017);
 
     private DefaultSongService defaultSongService;
     private SongRepository songRepositoryMock;
@@ -154,7 +155,6 @@ public class DefaultSongServiceTest {
         //then
         Mockito.verify(songRepositoryMock).findAll();
         assertEquals(expected, actual);
-
     }
 
 
@@ -189,21 +189,4 @@ public class DefaultSongServiceTest {
         Mockito.verify(songRepositoryMock).deleteById(2L);
     }
 
-    private static Song createSong(long id, String name, String interpreter, String album, String genre, int year) {
-        Song song = createSong(name, interpreter, album, genre, year);
-        song.setId(id);
-
-        return song;
-    }
-
-    private static Song createSong(String name, String interpreter, String album, String genre, int year) {
-        Song song = new Song();
-        song.setName(name);
-        song.setInterpreter(interpreter);
-        song.setAlbum(album);
-        song.setGenre(genre);
-        song.setYear(year);
-
-        return song;
-    }
 }

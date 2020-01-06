@@ -1,6 +1,7 @@
 package com.dominika.service;
 
 import com.dominika.model.Playlist;
+import com.dominika.model.Song;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface PlaylistService {
     void deletePlaylistById(long id);
 
     List<Playlist> getPlaylists();
+
+    void addSongsToPlaylist(long id, List<Song> songs);
 }

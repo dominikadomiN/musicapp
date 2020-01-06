@@ -2,7 +2,6 @@ package com.dominika.controller;
 
 import com.dominika.model.Song;
 import com.dominika.model.SongsResponse;
-import com.dominika.service.DefaultSongService;
 import com.dominika.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
