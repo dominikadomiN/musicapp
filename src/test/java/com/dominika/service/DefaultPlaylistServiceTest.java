@@ -6,6 +6,7 @@ import com.dominika.repository.PlaylistRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import support.PlaylistCreator;
 import support.SongCreator;
 
 import java.util.Arrays;
@@ -17,8 +18,8 @@ import static org.mockito.Mockito.when;
 
 public class DefaultPlaylistServiceTest {
 
-    private static final Playlist PLAYLIST_ONE = createPlaylist("Weekend");
-    private static final Playlist PLAYLIST_ONE_WITH_ID = createPlaylist(1L, "Weekend");
+    private static final Playlist PLAYLIST_ONE = PlaylistCreator.createPlaylist("Weekend");
+    private static final Playlist PLAYLIST_ONE_WITH_ID = PlaylistCreator.createPlaylist(1L, "Weekend");
     private static final Song SONG_ONE = SongCreator.createSong("Hello", "Beyonce", "4x4",
             "pop", 2016);
     private static final Song SONG_TWO = SongCreator.createSong("Soldier", "Beyonce", "Destiny's Child",
@@ -103,7 +104,7 @@ public class DefaultPlaylistServiceTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void shouldReturnRuntimeException_whenThereIsNoPlaylistWith2LId() {
+    public void shouldThrowRuntimeException_whenThereIsNoPlaylistWithThatId() {
         //given
         List<Song> songs = Arrays.asList(SONG_ONE, SONG_TWO, SONG_THREE);
         when(playlistRepositoryMock.findById(2L)).thenReturn(Optional.empty());
@@ -113,20 +114,5 @@ public class DefaultPlaylistServiceTest {
 
         //then
         Mockito.verify(playlistRepositoryMock, Mockito.never()).save(Mockito.any());
-    }
-
-    private static Playlist createPlaylist(String playlistName) {
-        Playlist playlist = new Playlist();
-        playlist.setName(playlistName);
-
-        return playlist;
-    }
-
-    private static Playlist createPlaylist(long id, String playlistName) {
-        Playlist playlist = new Playlist();
-        playlist.setId(id);
-        playlist.setName(playlistName);
-
-        return playlist;
     }
 }
