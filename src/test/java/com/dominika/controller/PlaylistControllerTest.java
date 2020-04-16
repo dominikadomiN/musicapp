@@ -145,7 +145,7 @@ public class PlaylistControllerTest {
     public void shouldThrowRuntimeException_whenSongIdNotFound() {
         //given
         List<Long> songsId = Collections.singletonList(SONG_ONE_ID);
-        doThrow(RuntimeException.class).when(songServiceMock).findSongById(SONG_ONE_ID);
+        doThrow(RuntimeException.class).when(songServiceMock.findSongById(SONG_ONE_ID));
 
         //when,then
         playlistController.addSongsToPlaylist(20L, songsId);
