@@ -5,23 +5,24 @@ import com.dominika.model.PlaylistResponse;
 import com.dominika.model.Song;
 import com.dominika.service.PlaylistService;
 import com.dominika.service.SongService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import support.PlaylistCreator;
 import support.SongCreator;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-public class PlaylistControllerTest {
+class PlaylistControllerTest {
 
     private static final Playlist PLAYLIST_ONE = PlaylistCreator.createPlaylist("Chill");
     private static final Playlist PLAYLIST_ONE_WITH_ID = PlaylistCreator.createPlaylist(10L, "Chill");
@@ -36,15 +37,15 @@ public class PlaylistControllerTest {
     private SongService songServiceMock;
     private PlaylistController playlistController;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.playlistServiceMock = Mockito.mock(PlaylistService.class);
         this.songServiceMock = Mockito.mock(SongService.class);
         this.playlistController = new PlaylistController(playlistServiceMock, songServiceMock);
     }
 
     @Test
-    public void shouldAddPlaylist() {
+    void shouldAddPlaylist() {
         //given
         when(playlistServiceMock.addPlaylist(PLAYLIST_ONE)).thenReturn(10L);
 
@@ -56,7 +57,7 @@ public class PlaylistControllerTest {
     }
 
     @Test
-    public void shouldShowPlaylistById() {
+    void shouldShowPlaylistById() {
         //given
         when(playlistServiceMock.findPlaylistById(10L)).thenReturn(PLAYLIST_ONE_WITH_ID);
 
@@ -67,20 +68,20 @@ public class PlaylistControllerTest {
         assertEquals(PLAYLIST_ONE_WITH_ID, actual);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeException_whenThereIsNoPlaylistById() {
+    @Test
+    void shouldThrowRuntimeException_whenThereIsNoPlaylistById() {
         //given
         doThrow(RuntimeException.class).when(playlistServiceMock).findPlaylistById(30L);
 
         //when,then
-        playlistController.showPlaylistById(30L);
+        assertThrows(RuntimeException.class, () -> playlistController.showPlaylistById(30L));
     }
 
     @Test
-    public void shouldAddSongsToPlaylist() {
+    void shouldAddSongsToPlaylist() {
         //given
-        List<Long> songsId = Arrays.asList(SONG_ONE_ID, SONG_TWO_ID);
-        List<Song> songs = Arrays.asList(SONG_ONE, SONG_TWO);
+        List<Long> songsId = List.of(SONG_ONE_ID, SONG_TWO_ID);
+        List<Song> songs = List.of(SONG_ONE, SONG_TWO);
 
         Playlist playlist = new Playlist();
         playlist.setId(10L);
@@ -94,12 +95,14 @@ public class PlaylistControllerTest {
         playlistController.addSongsToPlaylist(10L, songsId);
 
         //then
-        Mockito.verify(playlistServiceMock).addSongsToPlaylist(10L, songs);
-        Mockito.verify(songServiceMock, times(2)).findSongById(anyLong());
+        assertAll(
+                () -> Mockito.verify(playlistServiceMock).addSongsToPlaylist(10L, songs),
+                () -> Mockito.verify(songServiceMock, times(2)).findSongById(anyLong())
+        );
     }
 
     @Test
-    public void shouldDeletePlaylistById() {
+    void shouldDeletePlaylistById() {
         //given,when
         playlistController.deletePlaylistById(10L);
 
@@ -108,7 +111,7 @@ public class PlaylistControllerTest {
     }
 
     @Test
-    public void shouldShowPlaylist() {
+    void shouldShowPlaylist() {
         //given
         List<Playlist> playlists = Collections.singletonList(PLAYLIST_ONE_WITH_ID);
         PlaylistResponse expected = new PlaylistResponse();
@@ -121,12 +124,14 @@ public class PlaylistControllerTest {
         PlaylistResponse actual = playlistController.showPlaylist("Chill");
 
         //then
-        Mockito.verify(playlistServiceMock).getPlaylists();
-        assertEquals(expected, actual);
+        assertAll(
+                () -> Mockito.verify(playlistServiceMock).getPlaylists(),
+                () -> assertEquals(expected, actual)
+        );
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeException_whenPlaylistIdNotFound() {
+    @Test
+    void shouldThrowRuntimeException_whenPlaylistIdNotFound() {
         //given
         List<Long> songsId = Collections.singletonList(SONG_ONE_ID);
         List<Song> songs = Collections.singletonList(SONG_ONE);
@@ -135,19 +140,19 @@ public class PlaylistControllerTest {
         doThrow(RuntimeException.class).when(playlistServiceMock).addSongsToPlaylist(20L, songs);
 
         //when
-        playlistController.addSongsToPlaylist(20L, songsId);
+        assertThrows(RuntimeException.class, () -> playlistController.addSongsToPlaylist(20L, songsId));
 
         //then
         Mockito.verify(songServiceMock).findSongById(SONG_ONE_ID);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeException_whenSongIdNotFound() {
+    @Test
+    void shouldThrowRuntimeException_whenSongIdNotFound() {
         //given
         List<Long> songsId = Collections.singletonList(SONG_ONE_ID);
-        doThrow(RuntimeException.class).when(songServiceMock.findSongById(SONG_ONE_ID));
+        doThrow(RuntimeException.class).when(songServiceMock).findSongById(SONG_ONE_ID);
 
         //when,then
-        playlistController.addSongsToPlaylist(20L, songsId);
+        assertThrows(RuntimeException.class, () -> playlistController.addSongsToPlaylist(20L, songsId));
     }
 }

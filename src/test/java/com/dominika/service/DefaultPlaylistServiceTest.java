@@ -3,20 +3,21 @@ package com.dominika.service;
 import com.dominika.model.Playlist;
 import com.dominika.model.Song;
 import com.dominika.repository.PlaylistRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import support.PlaylistCreator;
 import support.SongCreator;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-public class DefaultPlaylistServiceTest {
+class DefaultPlaylistServiceTest {
 
     private static final Playlist PLAYLIST_ONE = PlaylistCreator.createPlaylist("Weekend");
     private static final Playlist PLAYLIST_ONE_WITH_ID = PlaylistCreator.createPlaylist(1L, "Weekend");
@@ -30,14 +31,14 @@ public class DefaultPlaylistServiceTest {
     private DefaultPlaylistService defaultPlaylistService;
     private PlaylistRepository playlistRepositoryMock;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.playlistRepositoryMock = Mockito.mock(PlaylistRepository.class);
         this.defaultPlaylistService = new DefaultPlaylistService(playlistRepositoryMock);
     }
 
     @Test
-    public void shouldAddPlaylist() {
+    void shouldAddPlaylist() {
         //given
         when(playlistRepositoryMock.save(PLAYLIST_ONE)).thenReturn(PLAYLIST_ONE_WITH_ID);
 
@@ -45,12 +46,14 @@ public class DefaultPlaylistServiceTest {
         long actual = defaultPlaylistService.addPlaylist(PLAYLIST_ONE);
 
         //then
-        Mockito.verify(playlistRepositoryMock).save(PLAYLIST_ONE);
-        assertEquals(1L, actual);
+        assertAll(
+                () -> Mockito.verify(playlistRepositoryMock).save(PLAYLIST_ONE),
+                () -> assertEquals(1L, actual)
+        );
     }
 
     @Test
-    public void shouldGetPlaylistById() {
+    void shouldGetPlaylistById() {
         //given
         when(playlistRepositoryMock.findById(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
 
@@ -58,12 +61,14 @@ public class DefaultPlaylistServiceTest {
         Playlist actual = defaultPlaylistService.findPlaylistById(1L);
 
         //then
-        Mockito.verify(playlistRepositoryMock).findById(1L);
-        assertEquals(PLAYLIST_ONE_WITH_ID, actual);
+        assertAll(
+                () -> Mockito.verify(playlistRepositoryMock).findById(1L),
+                () -> assertEquals(PLAYLIST_ONE_WITH_ID, actual)
+        );
     }
 
     @Test
-    public void shouldDeletePlaylistById() {
+    void shouldDeletePlaylistById() {
         //when
         defaultPlaylistService.deletePlaylistById(2L);
 
@@ -72,23 +77,25 @@ public class DefaultPlaylistServiceTest {
     }
 
     @Test
-    public void shouldGetAllPlaylists() {
+    void shouldGetAllPlaylists() {
         //given
-        when(playlistRepositoryMock.findAll()).thenReturn(Arrays.asList(PLAYLIST_ONE_WITH_ID));
-        List<Playlist> expected = Arrays.asList(PLAYLIST_ONE_WITH_ID);
+        when(playlistRepositoryMock.findAll()).thenReturn(List.of(PLAYLIST_ONE_WITH_ID));
+        List<Playlist> expected = List.of(PLAYLIST_ONE_WITH_ID);
 
         //when
         List<Playlist> actual = defaultPlaylistService.getPlaylists();
 
         //then
-        Mockito.verify(playlistRepositoryMock).findAll();
-        assertEquals(expected, actual);
+        assertAll(
+                () -> Mockito.verify(playlistRepositoryMock).findAll(),
+                () -> assertEquals(expected, actual)
+        );
     }
 
     @Test
-    public void shouldAddSongsToPlaylist() {
+    void shouldAddSongsToPlaylist() {
         //given
-        List<Song> songs = Arrays.asList(SONG_ONE, SONG_TWO, SONG_THREE);
+        List<Song> songs = List.of(SONG_ONE, SONG_TWO, SONG_THREE);
         Playlist playlist = new Playlist();
         playlist.setId(1L);
         playlist.setName("Weekend");
@@ -103,14 +110,14 @@ public class DefaultPlaylistServiceTest {
         Mockito.verify(playlistRepositoryMock).save(playlist);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeException_whenThereIsNoPlaylistWithThatId() {
+    @Test
+    void shouldThrowRuntimeException_whenThereIsNoPlaylistWithThatId() {
         //given
-        List<Song> songs = Arrays.asList(SONG_ONE, SONG_TWO, SONG_THREE);
+        List<Song> songs = List.of(SONG_ONE, SONG_TWO, SONG_THREE);
         when(playlistRepositoryMock.findById(2L)).thenReturn(Optional.empty());
 
         //when
-        defaultPlaylistService.addSongsToPlaylist(2L, songs);
+        assertThrows(RuntimeException.class, () -> defaultPlaylistService.addSongsToPlaylist(2L, songs));
 
         //then
         Mockito.verify(playlistRepositoryMock, Mockito.never()).save(Mockito.any());

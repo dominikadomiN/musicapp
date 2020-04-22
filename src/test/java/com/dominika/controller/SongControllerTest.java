@@ -3,19 +3,21 @@ package com.dominika.controller;
 import com.dominika.model.Song;
 import com.dominika.model.SongsResponse;
 import com.dominika.service.SongService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import support.SongCreator;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-public class SongControllerTest {
+class SongControllerTest {
     private static final long SONG_ONE_ID = 1L;
     private static final Song SONG_ONE = SongCreator.createSong(SONG_ONE_ID, "Hello", "Madonna", "1",
             "pop", 1998);
@@ -23,14 +25,14 @@ public class SongControllerTest {
     private SongService songServiceMock;
     private SongController songController;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.songServiceMock = Mockito.mock(SongService.class);
         this.songController = new SongController(songServiceMock);
     }
 
     @Test
-    public void shouldAddSong() {
+    void shouldAddSong() {
         //given
         when(songServiceMock.addSong(SONG_ONE)).thenReturn(1L);
 
@@ -38,12 +40,14 @@ public class SongControllerTest {
         long actual = songController.addSong(SONG_ONE);
 
         //then
-        Mockito.verify(songServiceMock).addSong(SONG_ONE);
-        assertEquals(1L, actual);
+        assertAll(
+                () -> Mockito.verify(songServiceMock).addSong(SONG_ONE),
+                () -> assertEquals(1L, actual)
+        );
     }
 
     @Test
-    public void shouldDeleteSong() {
+    void shouldDeleteSong() {
         //given,when
         songController.deleteSongById(SONG_ONE_ID);
 
@@ -52,7 +56,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void shouldShowSongById() {
+    void shouldShowSongById() {
         //given
         when(songServiceMock.findSongById(SONG_ONE_ID)).thenReturn(SONG_ONE);
 
@@ -60,21 +64,23 @@ public class SongControllerTest {
         Song actual = songController.showSongById(SONG_ONE_ID);
 
         //then
-        Mockito.verify(songServiceMock).findSongById(SONG_ONE_ID);
-        assertEquals(SONG_ONE, actual);
+        assertAll(
+                () -> Mockito.verify(songServiceMock).findSongById(SONG_ONE_ID),
+                () -> assertEquals(SONG_ONE, actual)
+        );
     }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeException_whenThereIsNoSongWithThatId() {
+    @Test
+    void shouldThrowRuntimeException_whenThereIsNoSongWithThatId() {
         //given
         doThrow(RuntimeException.class).when(songServiceMock).findSongById(2L);
 
         //when,then
-        songController.showSongById(2L);
+        assertThrows(RuntimeException.class, () -> songController.showSongById(2L));
     }
 
     @Test
-    public void shouldShowSongs() {
+    void shouldShowSongs() {
         List<Song> songs = Collections.singletonList(SONG_ONE);
         SongsResponse expected = new SongsResponse();
         expected.setSongs(songs);
@@ -86,7 +92,9 @@ public class SongControllerTest {
         SongsResponse actual = songController.showSongs("Hello", "Madonna", "1", "pop", 1998);
 
         //then
-        Mockito.verify(songServiceMock).getSongs("Hello", "Madonna", "1", "pop", 1998);
-        assertEquals(expected, actual);
+        assertAll(
+                () -> Mockito.verify(songServiceMock).getSongs("Hello", "Madonna", "1", "pop", 1998),
+                () -> assertEquals(expected, actual)
+        );
     }
 }
