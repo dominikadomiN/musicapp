@@ -1,0 +1,4 @@
+.idea/
+musicapp-repository/target/
+musicapp-service/target/
+musicapp.iml
