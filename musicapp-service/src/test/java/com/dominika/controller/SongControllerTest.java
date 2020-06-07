@@ -1,5 +1,6 @@
 package com.dominika.controller;
 
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Song;
 import com.dominika.controller.response.SongsResponse;
 import com.dominika.service.SongService;
@@ -71,12 +72,12 @@ class SongControllerTest {
     }
 
     @Test
-    void shouldThrowRuntimeException_whenThereIsNoSongWithThatId() {
+    void shouldThrowNoSuchPlaylistException_whenThereIsNoSongWithThatId() {
         //given
-        doThrow(RuntimeException.class).when(songServiceMock).findSongById(2L);
+        doThrow(NoSuchPlaylistException.class).when(songServiceMock).findSongById(2L);
 
         //when,then
-        assertThrows(RuntimeException.class, () -> songController.showSongById(2L));
+        assertThrows(NoSuchPlaylistException.class, () -> songController.showSongById(2L));
     }
 
     @Test

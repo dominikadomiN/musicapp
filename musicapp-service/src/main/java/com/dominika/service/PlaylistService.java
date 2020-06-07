@@ -13,7 +13,7 @@ public interface PlaylistService {
 
     void deletePlaylistById(long id);
 
-    List<Playlist> getPlaylists();
+    List<Playlist> getPlaylists(String name);
 
     void addSongsToPlaylist(long id, List<Song> songs);
 }

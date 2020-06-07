@@ -1,7 +1,7 @@
 package com.dominika.controller;
 
-import com.dominika.entity.Playlist;
 import com.dominika.controller.response.PlaylistResponse;
+import com.dominika.entity.Playlist;
 import com.dominika.service.PlaylistService;
 import com.dominika.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class PlaylistController {
     }
 
     @GetMapping(value = "/show/{id}")
-    public Playlist showPlaylistById(@PathVariable long id) {
+    public Playlist showPlaylistById(@PathVariable long id){
         return playlistService.findPlaylistById(id);
     }
 
@@ -47,8 +47,7 @@ public class PlaylistController {
 
     @GetMapping(value = "/show")
     public PlaylistResponse showPlaylist(@RequestParam(required = false) String name) {
-
-        var playlists = playlistService.getPlaylists();
+        var playlists = playlistService.getPlaylists(name);
         return mapPlaylistResponse(playlists);
     }
 

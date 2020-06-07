@@ -1,5 +1,6 @@
 package com.dominika.service;
 
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Playlist;
 import com.dominika.entity.Song;
 import com.dominika.repository.PlaylistRepository;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultPlaylistService implements PlaylistService {
@@ -27,7 +29,7 @@ public class DefaultPlaylistService implements PlaylistService {
     @Override
     public Playlist findPlaylistById(long id) {
         return playlistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no such playlist with id = " + id));
+                .orElseThrow(NoSuchPlaylistException::new);
     }
 
     @Override
@@ -36,8 +38,13 @@ public class DefaultPlaylistService implements PlaylistService {
     }
 
     @Override
-    public List<Playlist> getPlaylists() {
-        return playlistRepository.findAll();
+    public List<Playlist> getPlaylists(String name) {
+        if (name == null) {
+            return playlistRepository.findAll();
+        }
+        return playlistRepository.findByName(name)
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.dominika.controller;
 
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Playlist;
 import com.dominika.controller.response.PlaylistResponse;
 import com.dominika.entity.Song;
@@ -70,12 +71,12 @@ class PlaylistControllerTest {
     }
 
     @Test
-    void shouldThrowRuntimeException_whenThereIsNoPlaylistById() {
+    void shouldThrowNoSuchPlaylistException_whenThereIsNoPlaylistById() {
         //given
-        doThrow(RuntimeException.class).when(playlistServiceMock).findPlaylistById(30L);
+        doThrow(NoSuchPlaylistException.class).when(playlistServiceMock).findPlaylistById(30L);
 
         //when,then
-        assertThrows(RuntimeException.class, () -> playlistController.showPlaylistById(30L));
+        assertThrows(NoSuchPlaylistException.class, () -> playlistController.showPlaylistById(30L));
     }
 
     @Test
@@ -119,41 +120,41 @@ class PlaylistControllerTest {
         expected.setPlaylists(playlists);
         expected.setTotal(1);
 
-        when(playlistServiceMock.getPlaylists()).thenReturn(playlists);
+        when(playlistServiceMock.getPlaylists(PLAYLIST_ONE.getName())).thenReturn(playlists);
 
         //when
         var actual = playlistController.showPlaylist("Chill");
 
         //then
         assertAll(
-                () -> Mockito.verify(playlistServiceMock).getPlaylists(),
+                () -> Mockito.verify(playlistServiceMock).getPlaylists(PLAYLIST_ONE.getName()),
                 () -> assertEquals(expected, actual)
         );
     }
 
     @Test
-    void shouldThrowRuntimeException_whenPlaylistIdNotFound() {
+    void shouldThrowNoSuchPlaylistException_whenPlaylistIdNotFound() {
         //given
         var songsId = Collections.singletonList(SONG_ONE_ID);
         var songs = Collections.singletonList(SONG_ONE);
         when(songServiceMock.findSongById(SONG_ONE_ID)).thenReturn(SONG_ONE);
 
-        doThrow(RuntimeException.class).when(playlistServiceMock).addSongsToPlaylist(20L, songs);
+        doThrow(NoSuchPlaylistException.class).when(playlistServiceMock).addSongsToPlaylist(20L, songs);
 
         //when
-        assertThrows(RuntimeException.class, () -> playlistController.addSongsToPlaylist(20L, songsId));
+        assertThrows(NoSuchPlaylistException.class, () -> playlistController.addSongsToPlaylist(20L, songsId));
 
         //then
         Mockito.verify(songServiceMock).findSongById(SONG_ONE_ID);
     }
 
     @Test
-    void shouldThrowRuntimeException_whenSongIdNotFound() {
+    void shouldThrowNoSuchPlaylistExceptionn_whenSongIdNotFound() {
         //given
         var songsId = Collections.singletonList(SONG_ONE_ID);
-        doThrow(RuntimeException.class).when(songServiceMock).findSongById(SONG_ONE_ID);
+        doThrow(NoSuchPlaylistException.class).when(songServiceMock).findSongById(SONG_ONE_ID);
 
         //when,then
-        assertThrows(RuntimeException.class, () -> playlistController.addSongsToPlaylist(20L, songsId));
+        assertThrows(NoSuchPlaylistException.class, () -> playlistController.addSongsToPlaylist(20L, songsId));
     }
 }

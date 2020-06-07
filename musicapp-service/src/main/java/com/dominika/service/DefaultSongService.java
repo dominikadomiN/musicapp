@@ -1,5 +1,6 @@
 package com.dominika.service;
 
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Song;
 import com.dominika.repository.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class DefaultSongService implements SongService {
     @Override
     public Song findSongById(long id) {
         return songRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no such song with id = " + id));
+                .orElseThrow(NoSuchPlaylistException::new);
     }
 
     @Override

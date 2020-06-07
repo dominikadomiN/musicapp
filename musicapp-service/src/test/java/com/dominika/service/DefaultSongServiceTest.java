@@ -1,5 +1,6 @@
 package com.dominika.service;
 
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Song;
 import com.dominika.repository.SongRepository;
 import org.junit.jupiter.api.Assertions;
@@ -193,12 +194,12 @@ class DefaultSongServiceTest {
     }
 
     @Test
-    void findSongById_shouldThrowRuntimeException() {
+    void findSongById_shouldThrowNoSuchPlaylistException() {
         //given
         when(songRepositoryMock.findById(3L)).thenReturn(Optional.empty());
 
         //when
-        assertThrows(RuntimeException.class, () -> defaultSongService.findSongById(3L));
+        assertThrows(NoSuchPlaylistException.class, () -> defaultSongService.findSongById(3L));
     }
 
     @Test
