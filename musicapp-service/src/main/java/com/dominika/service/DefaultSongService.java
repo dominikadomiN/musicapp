@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,32 +31,14 @@ public class DefaultSongService implements SongService {
     public List<Song> getSongs(String name, String interpreter, String album, String genre, Integer year) {
         List<Song> allSongs = songRepository.findAll();
 
-        if (name != null || interpreter != null || album != null || genre != null || year != null) {
-            Stream<Song> songStream = allSongs.stream();
-            if (name != null) {
-                songStream = songStream.filter(song -> song.getName().equalsIgnoreCase(name));
-            }
+        Stream<Song> songStream = allSongs.stream();
+        songStream = filterByStringField(songStream, name, Song::getName);
+        songStream = filterByStringField(songStream, interpreter, Song::getInterpreter);
+        songStream = filterByStringField(songStream, album, Song::getAlbum);
+        songStream = filterByStringField(songStream, genre, Song::getGenre);
+        songStream = filterByIntegerField(songStream, year, Song::getYear);
 
-            if (interpreter != null) {
-                songStream = songStream.filter(song -> song.getInterpreter().equalsIgnoreCase(interpreter));
-            }
-
-            if (album != null) {
-                songStream = songStream.filter(song -> song.getAlbum().equalsIgnoreCase(album));
-            }
-
-            if (genre != null) {
-                songStream = songStream.filter(song -> song.getGenre().equalsIgnoreCase(genre));
-            }
-
-            if (year != null) {
-                songStream = songStream.filter(song -> song.getYear() == year);
-            }
-
-            allSongs = songStream.collect(Collectors.toList());
-        }
-
-        return allSongs;
+        return songStream.collect(Collectors.toList());
     }
 
     @Override
@@ -69,4 +52,18 @@ public class DefaultSongService implements SongService {
         songRepository.deleteById(id);
     }
 
+
+    private Stream<Song> filterByStringField(Stream<Song> songStream, String valueToFilter, Function<Song, String> valueInFunction) {
+        if (valueToFilter == null) {
+            return songStream;
+        }
+        return songStream.filter(song -> valueInFunction.apply(song).equalsIgnoreCase(valueToFilter));
+    }
+
+    private Stream<Song> filterByIntegerField(Stream<Song> songStream, Integer valueToFielter, Function<Song, Integer> valueInFunction) {
+        if (valueToFielter == null) {
+            return songStream;
+        }
+        return songStream.filter(song -> valueInFunction.apply(song).equals(valueToFielter));
+    }
 }
