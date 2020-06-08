@@ -1,5 +1,6 @@
 package com.dominika.controller;
 
+import com.dominika.controller.request.SongRequestParams;
 import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Song;
 import com.dominika.controller.response.SongsResponse;
@@ -22,6 +23,7 @@ class SongControllerTest {
     private static final long SONG_ONE_ID = 1L;
     private static final Song SONG_ONE = SongCreator.createSong(SONG_ONE_ID, "Hello", "Madonna", "1",
             "pop", 1998);
+    private static final SongRequestParams SONG_REQUEST_PARAMS_ONE = new SongRequestParams("Hello", "Madonna", "1", "pop", 1998);
 
     private SongService songServiceMock;
     private SongController songController;
@@ -87,14 +89,14 @@ class SongControllerTest {
         expected.setSongs(songs);
         expected.setTotal(1);
 
-        when(songServiceMock.getSongs("Hello", "Madonna", "1", "pop", 1998)).thenReturn(songs);
+        when(songServiceMock.getSongs(SONG_REQUEST_PARAMS_ONE)).thenReturn(songs);
 
         //when
-        var actual = songController.showSongs("Hello", "Madonna", "1", "pop", 1998);
+        var actual = songController.showSongs(SONG_REQUEST_PARAMS_ONE);
 
         //then
         assertAll(
-                () -> Mockito.verify(songServiceMock).getSongs("Hello", "Madonna", "1", "pop", 1998),
+                () -> Mockito.verify(songServiceMock).getSongs(SONG_REQUEST_PARAMS_ONE),
                 () -> assertEquals(expected, actual)
         );
     }

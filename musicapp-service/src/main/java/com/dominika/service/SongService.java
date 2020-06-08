@@ -1,5 +1,6 @@
 package com.dominika.service;
 
+import com.dominika.controller.request.SongRequestParams;
 import com.dominika.entity.Song;
 
 import java.util.List;
@@ -8,7 +9,7 @@ public interface SongService {
 
     long addSong(Song song);
 
-    List<Song> getSongs(String name, String interpreter, String album, String genre, Integer year);
+    List<Song> getSongs(SongRequestParams songRequestParams);
 
     Song findSongById(long id);
 

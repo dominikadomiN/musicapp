@@ -1,5 +1,6 @@
 package com.dominika.service;
 
+import com.dominika.controller.request.SongRequestParams;
 import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.entity.Song;
 import com.dominika.repository.SongRepository;
@@ -28,15 +29,15 @@ public class DefaultSongService implements SongService {
     }
 
     @Override
-    public List<Song> getSongs(String name, String interpreter, String album, String genre, Integer year) {
+    public List<Song> getSongs(SongRequestParams songRequestParams) {
         List<Song> allSongs = songRepository.findAll();
 
         Stream<Song> songStream = allSongs.stream();
-        songStream = filterByStringField(songStream, name, Song::getName);
-        songStream = filterByStringField(songStream, interpreter, Song::getInterpreter);
-        songStream = filterByStringField(songStream, album, Song::getAlbum);
-        songStream = filterByStringField(songStream, genre, Song::getGenre);
-        songStream = filterByIntegerField(songStream, year, Song::getYear);
+        songStream = filterByStringField(songStream, songRequestParams.getName(), Song::getName);
+        songStream = filterByStringField(songStream, songRequestParams.getInterpreter(), Song::getInterpreter);
+        songStream = filterByStringField(songStream, songRequestParams.getAlbum(), Song::getAlbum);
+        songStream = filterByStringField(songStream, songRequestParams.getGenre(), Song::getGenre);
+        songStream = filterByIntegerField(songStream, songRequestParams.getYear(), Song::getYear);
 
         return songStream.collect(Collectors.toList());
     }
