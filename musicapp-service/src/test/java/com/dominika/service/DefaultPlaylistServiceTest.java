@@ -100,7 +100,7 @@ class DefaultPlaylistServiceTest {
     @Test
     void shouldGetAllPlaylists_whenNameIsNotNull() {
         //given
-        when(playlistRepositoryMock.findByName(PLAYLIST_NAME)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
+        when(playlistRepositoryMock.findByName(PLAYLIST_NAME)).thenReturn(List.of(PLAYLIST_ONE_WITH_ID));
         var expected = List.of(PLAYLIST_ONE_WITH_ID);
 
         //when
@@ -116,7 +116,7 @@ class DefaultPlaylistServiceTest {
     @Test
     void shouldReturnEmptyOptional_whenPlaylistNameDoesNotExist() {
         //given
-        when(playlistRepositoryMock.findByName(PLAYLIST_NAME_WHEN_DOESNT_EXIST)).thenReturn(Optional.empty());
+        when(playlistRepositoryMock.findByName(PLAYLIST_NAME_WHEN_DOESNT_EXIST)).thenReturn(Collections.emptyList());
 
         //when
         var actual = defaultPlaylistService.getPlaylists(PLAYLIST_NAME_WHEN_DOESNT_EXIST);

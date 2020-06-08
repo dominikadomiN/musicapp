@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/playlist")
 public class PlaylistController {
-
     private final PlaylistService playlistService;
     private final SongService songService;
 
@@ -36,7 +35,7 @@ public class PlaylistController {
     }
 
     @GetMapping(value = "/show/{id}")
-    public Playlist showPlaylistById(@PathVariable long id){
+    public Playlist showPlaylistById(@PathVariable long id) {
         return playlistService.findPlaylistById(id);
     }
 
@@ -57,7 +56,6 @@ public class PlaylistController {
         var songs = songIds.stream()
                 .map(songService::findSongById)
                 .collect(Collectors.toList());
-
         playlistService.addSongsToPlaylist(playlistId, songs);
     }
 
