@@ -1,5 +1,6 @@
-package com.dominika.entity;
+package com.dominika.repository.entity;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,11 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Builder
 @Data
 @EqualsAndHashCode
 @Entity
 @Table(name = "song")
-public class Song {
+public class SongEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,11 +1,9 @@
 package com.dominika.service;
 
+import com.dominika.commons.model.Playlist;
+import com.dominika.commons.model.Song;
 import com.dominika.controller.validator.NoSuchPlaylistException;
-import com.dominika.entity.Playlist;
-import com.dominika.entity.Song;
-import com.dominika.repository.PlaylistRepository;
-import com.dominika.support.PlaylistCreator;
-import com.dominika.support.SongCreator;
+import com.dominika.commons.PlaylistRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,14 +20,35 @@ import static org.mockito.Mockito.when;
 
 class DefaultPlaylistServiceTest {
 
-    private static final Playlist PLAYLIST_ONE = PlaylistCreator.createPlaylist("Weekend");
-    private static final Playlist PLAYLIST_ONE_WITH_ID = PlaylistCreator.createPlaylist(1L, "Weekend");
-    private static final Song SONG_ONE = SongCreator.createSong("Hello", "Beyonce", "4x4",
-            "pop", 2016);
-    private static final Song SONG_TWO = SongCreator.createSong("Soldier", "Beyonce", "Destiny's Child",
-            "pop", 2008);
-    private static final Song SONG_THREE = SongCreator.createSong("Silent", "Beyonce", "Hello",
-            "pop", 2007);
+    private static final Playlist PLAYLIST_ONE = Playlist.builder()
+            .name("Weekend")
+            .build();
+    private static final Playlist PLAYLIST_ONE_WITH_ID = Playlist.builder()
+            .id(1L)
+            .name("Weekend")
+            .build();
+    private static final Song SONG_ONE = Song.builder()
+            .name("Hello")
+            .interpreter("Beyonce")
+            .album("4x4")
+            .genre("pop")
+            .year(2016)
+            .build();
+    private static final Song SONG_TWO = Song.builder()
+            .name("Soldier")
+            .interpreter("Beyonce")
+            .album("Destiny's Child")
+            .genre("pop")
+            .year(2008)
+            .build();
+    private static final Song SONG_THREE = Song.builder()
+            .name("Silent")
+            .interpreter("Beyonce")
+            .album("Hello")
+            .genre("pop")
+            .year(2007)
+            .build();
+
     private static final String PLAYLIST_NAME = "Weekend";
     private static final String PLAYLIST_NAME_WHEN_DOESNT_EXIST = "Chill";
 
@@ -45,14 +64,14 @@ class DefaultPlaylistServiceTest {
     @Test
     void shouldAddPlaylist() {
         //given
-        when(playlistRepositoryMock.save(PLAYLIST_ONE)).thenReturn(PLAYLIST_ONE_WITH_ID);
+        when(playlistRepositoryMock.addPlaylist(PLAYLIST_ONE)).thenReturn(PLAYLIST_ONE_WITH_ID.getId());
 
         //when
         var actual = defaultPlaylistService.addPlaylist(PLAYLIST_ONE);
 
         //then
         assertAll(
-                () -> Mockito.verify(playlistRepositoryMock).save(PLAYLIST_ONE),
+                () -> Mockito.verify(playlistRepositoryMock).addPlaylist(PLAYLIST_ONE),
                 () -> Assertions.assertEquals(1L, actual)
         );
     }
@@ -60,14 +79,14 @@ class DefaultPlaylistServiceTest {
     @Test
     void shouldGetPlaylistById() {
         //given
-        when(playlistRepositoryMock.findById(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
+        when(playlistRepositoryMock.getPlaylist(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
 
         //when
         var actual = defaultPlaylistService.findPlaylistById(1L);
 
         //then
         assertAll(
-                () -> Mockito.verify(playlistRepositoryMock).findById(1L),
+                () -> Mockito.verify(playlistRepositoryMock).getPlaylist(1L),
                 () -> assertEquals(PLAYLIST_ONE_WITH_ID, actual)
         );
     }
@@ -78,13 +97,13 @@ class DefaultPlaylistServiceTest {
         defaultPlaylistService.deletePlaylistById(2L);
 
         //then
-        Mockito.verify(playlistRepositoryMock).deleteById(2L);
+        Mockito.verify(playlistRepositoryMock).deletePlaylist(2L);
     }
 
     @Test
     void shouldGetAllPlaylists_whenNameIsNull() {
         //given
-        when(playlistRepositoryMock.findAll()).thenReturn(List.of(PLAYLIST_ONE_WITH_ID));
+        when(playlistRepositoryMock.getAllPlaylists()).thenReturn(List.of(PLAYLIST_ONE_WITH_ID));
         var expected = List.of(PLAYLIST_ONE_WITH_ID);
 
         //when
@@ -92,7 +111,7 @@ class DefaultPlaylistServiceTest {
 
         //then
         assertAll(
-                () -> Mockito.verify(playlistRepositoryMock).findAll(),
+                () -> Mockito.verify(playlistRepositoryMock).getAllPlaylists(),
                 () -> assertEquals(expected, actual)
         );
     }
@@ -100,7 +119,7 @@ class DefaultPlaylistServiceTest {
     @Test
     void shouldGetAllPlaylists_whenNameIsNotNull() {
         //given
-        when(playlistRepositoryMock.findByName(PLAYLIST_NAME)).thenReturn(List.of(PLAYLIST_ONE_WITH_ID));
+        when(playlistRepositoryMock.findPlaylistsByName(PLAYLIST_NAME)).thenReturn(List.of(PLAYLIST_ONE_WITH_ID));
         var expected = List.of(PLAYLIST_ONE_WITH_ID);
 
         //when
@@ -108,7 +127,7 @@ class DefaultPlaylistServiceTest {
 
         //then
         assertAll(
-                () -> Mockito.verify(playlistRepositoryMock).findByName(PLAYLIST_NAME),
+                () -> Mockito.verify(playlistRepositoryMock).findPlaylistsByName(PLAYLIST_NAME),
                 () -> assertEquals(expected, actual)
         );
     }
@@ -116,14 +135,14 @@ class DefaultPlaylistServiceTest {
     @Test
     void shouldReturnEmptyOptional_whenPlaylistNameDoesNotExist() {
         //given
-        when(playlistRepositoryMock.findByName(PLAYLIST_NAME_WHEN_DOESNT_EXIST)).thenReturn(Collections.emptyList());
+        when(playlistRepositoryMock.findPlaylistsByName(PLAYLIST_NAME_WHEN_DOESNT_EXIST)).thenReturn(Collections.emptyList());
 
         //when
         var actual = defaultPlaylistService.getPlaylists(PLAYLIST_NAME_WHEN_DOESNT_EXIST);
 
         //then
         assertAll(
-                () -> Mockito.verify(playlistRepositoryMock).findByName(PLAYLIST_NAME_WHEN_DOESNT_EXIST),
+                () -> Mockito.verify(playlistRepositoryMock).findPlaylistsByName(PLAYLIST_NAME_WHEN_DOESNT_EXIST),
                 () -> assertEquals(Collections.emptyList(), actual)
         );
     }
@@ -132,30 +151,31 @@ class DefaultPlaylistServiceTest {
     void shouldAddSongsToPlaylist() {
         //given
         var songs = List.of(SONG_ONE, SONG_TWO, SONG_THREE);
-        var playlist = new Playlist();
-        playlist.setId(1L);
-        playlist.setName("Weekend");
-        playlist.setSongs(songs);
+        var playlist = Playlist.builder()
+                .id(1L)
+                .name("Weekend")
+                .songs(songs)
+                .build();
 
-        when(playlistRepositoryMock.findById(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
+        when(playlistRepositoryMock.getPlaylist(1L)).thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
 
         //when
         defaultPlaylistService.addSongsToPlaylist(1L, songs);
 
         //then
-        Mockito.verify(playlistRepositoryMock).save(playlist);
+        Mockito.verify(playlistRepositoryMock).addPlaylist(playlist);
     }
 
     @Test
     void shouldThrowNoSuchPlaylistException_whenThereIsNoPlaylistWithThatId() {
         //given
         var songs = List.of(SONG_ONE, SONG_TWO, SONG_THREE);
-        when(playlistRepositoryMock.findById(2L)).thenReturn(Optional.empty());
+        when(playlistRepositoryMock.getPlaylist(2L)).thenReturn(Optional.empty());
 
         //when
         assertThrows(NoSuchPlaylistException.class, () -> defaultPlaylistService.addSongsToPlaylist(2L, songs));
 
         //then
-        Mockito.verify(playlistRepositoryMock, Mockito.never()).save(Mockito.any());
+        Mockito.verify(playlistRepositoryMock, Mockito.never()).addPlaylist(Mockito.any());
     }
 }

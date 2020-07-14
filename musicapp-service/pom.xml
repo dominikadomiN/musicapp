@@ -15,10 +15,14 @@
         <!-- project module dependencies -->
         <dependency>
             <groupId>com.dominika.musicapp</groupId>
+            <artifactId>musicapp-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dominika.musicapp</groupId>
             <artifactId>musicapp-repository</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <!--spring boot-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

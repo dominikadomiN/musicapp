@@ -1,7 +1,7 @@
 package com.dominika.controller;
 
+import com.dominika.commons.model.Playlist;
 import com.dominika.controller.response.PlaylistResponse;
-import com.dominika.entity.Playlist;
 import com.dominika.service.PlaylistService;
 import com.dominika.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;

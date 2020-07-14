@@ -1,7 +1,7 @@
 package com.dominika.service;
 
+import com.dominika.commons.model.Song;
 import com.dominika.controller.request.SongRequestParams;
-import com.dominika.entity.Song;
 
 import java.util.List;
 

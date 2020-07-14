@@ -1,15 +1,14 @@
 package com.dominika.controller;
 
+import com.dominika.commons.model.Song;
 import com.dominika.controller.request.SongRequestParams;
-import com.dominika.controller.validator.NoSuchPlaylistException;
-import com.dominika.entity.Song;
 import com.dominika.controller.response.SongsResponse;
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.service.SongService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import com.dominika.support.SongCreator;
 
 import java.util.Collections;
 
@@ -21,9 +20,16 @@ import static org.mockito.Mockito.when;
 
 class SongControllerTest {
     private static final long SONG_ONE_ID = 1L;
-    private static final Song SONG_ONE = SongCreator.createSong(SONG_ONE_ID, "Hello", "Madonna", "1",
-            "pop", 1998);
-    private static final SongRequestParams SONG_REQUEST_PARAMS_ONE = new SongRequestParams("Hello", "Madonna", "1", "pop", 1998);
+    private static final Song SONG_ONE = Song.builder()
+            .id(SONG_ONE_ID)
+            .name("Hello")
+            .album("1")
+            .interpreter("Madonna")
+            .year(1998)
+            .genre("pop")
+            .build();
+    private static final SongRequestParams SONG_REQUEST_PARAMS_ONE =
+            new SongRequestParams("Hello", "Madonna", "1", "pop", 1998);
 
     private SongService songServiceMock;
     private SongController songController;

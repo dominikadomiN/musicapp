@@ -1,6 +1,6 @@
 package com.dominika.controller.response;
 
-import com.dominika.entity.Song;
+import com.dominika.commons.model.Song;
 import lombok.Data;
 
 import java.util.List;

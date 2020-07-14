@@ -19,6 +19,7 @@
     <modules>
         <module>musicapp-repository</module>
         <module>musicapp-service</module>
+        <module>musicapp-commons</module>
     </modules>
 
 

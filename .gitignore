@@ -1,4 +1,5 @@
 .idea/
+musicapp-commons/target/
 musicapp-repository/target/
 musicapp-service/target/
 musicapp.iml

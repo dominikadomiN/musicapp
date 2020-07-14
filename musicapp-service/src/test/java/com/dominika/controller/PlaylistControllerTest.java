@@ -1,17 +1,15 @@
 package com.dominika.controller;
 
-import com.dominika.controller.validator.NoSuchPlaylistException;
-import com.dominika.entity.Playlist;
+import com.dominika.commons.model.Playlist;
+import com.dominika.commons.model.Song;
 import com.dominika.controller.response.PlaylistResponse;
-import com.dominika.entity.Song;
+import com.dominika.controller.validator.NoSuchPlaylistException;
 import com.dominika.service.PlaylistService;
 import com.dominika.service.SongService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import com.dominika.support.PlaylistCreator;
-import com.dominika.support.SongCreator;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,14 +24,31 @@ import static org.mockito.Mockito.when;
 
 class PlaylistControllerTest {
 
-    private static final Playlist PLAYLIST_ONE = PlaylistCreator.createPlaylist("Chill");
-    private static final Playlist PLAYLIST_ONE_WITH_ID = PlaylistCreator.createPlaylist(10L, "Chill");
+    private static final Playlist PLAYLIST_ONE = Playlist.builder()
+            .name("Chill")
+            .build();
+    private static final Playlist PLAYLIST_ONE_WITH_ID = Playlist.builder()
+            .id(10L)
+            .name("Chill")
+            .build();
     private static final long SONG_ONE_ID = 1L;
-    private static final Song SONG_ONE = SongCreator.createSong(SONG_ONE_ID, "Hello", "Madonna", "1",
-            "pop", 1998);
+    private static final Song SONG_ONE = Song.builder()
+            .id(SONG_ONE_ID)
+            .name("Hello")
+            .interpreter("Madonna")
+            .album("1")
+            .genre("pop")
+            .year(1998)
+            .build();
     private static final long SONG_TWO_ID = 2L;
-    private static final Song SONG_TWO = SongCreator.createSong(SONG_TWO_ID, "Good", "Don", "Nice",
-            "pop", 2014);
+    private static final Song SONG_TWO = Song.builder()
+            .id(SONG_TWO_ID)
+            .name("Good")
+            .interpreter("Don")
+            .album("Nice")
+            .genre("pop")
+            .year(2014)
+            .build();
 
     private PlaylistService playlistServiceMock;
     private SongService songServiceMock;
@@ -85,10 +100,11 @@ class PlaylistControllerTest {
         var songsId = List.of(SONG_ONE_ID, SONG_TWO_ID);
         var songs = List.of(SONG_ONE, SONG_TWO);
 
-        Playlist playlist = new Playlist();
-        playlist.setId(10L);
-        playlist.setName("Chill");
-        playlist.setSongs(songs);
+        Playlist.builder()
+                .id(10L)
+                .name("Chill")
+                .songs(songs)
+                .build();
 
         when(songServiceMock.findSongById(SONG_ONE_ID)).thenReturn(SONG_ONE);
         when(songServiceMock.findSongById(SONG_TWO_ID)).thenReturn(SONG_TWO);

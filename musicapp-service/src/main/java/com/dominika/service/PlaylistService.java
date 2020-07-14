@@ -1,7 +1,7 @@
 package com.dominika.service;
 
-import com.dominika.entity.Playlist;
-import com.dominika.entity.Song;
+import com.dominika.commons.model.Playlist;
+import com.dominika.commons.model.Song;
 
 import java.util.List;
 

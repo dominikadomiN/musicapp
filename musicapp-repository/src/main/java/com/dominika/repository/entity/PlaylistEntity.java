@@ -1,5 +1,6 @@
-package com.dominika.entity;
+package com.dominika.repository.entity;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,11 +18,12 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Data
 @EqualsAndHashCode
 @Entity
 @Table(name = "playlist")
-public class Playlist {
+public class PlaylistEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +38,5 @@ public class Playlist {
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
-    private List<Song> songs = new ArrayList<>();
+    private List<SongEntity> songs = new ArrayList<>();
 }
