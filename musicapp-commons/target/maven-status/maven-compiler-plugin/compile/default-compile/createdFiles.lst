@@ -1,6 +1,0 @@
-com\dominika\commons\model\Song.class
-com\dominika\commons\model\Playlist.class
-com\dominika\commons\SongRepository.class
-com\dominika\commons\model\Song$SongBuilder.class
-com\dominika\commons\PlaylistRepository.class
-com\dominika\commons\model\Playlist$PlaylistBuilder.class
