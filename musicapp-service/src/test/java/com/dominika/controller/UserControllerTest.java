@@ -3,14 +3,16 @@ package com.dominika.controller;
 import com.dominika.commons.model.Playlist;
 import com.dominika.commons.model.User;
 import com.dominika.service.UserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 class UserControllerTest {
@@ -26,6 +28,10 @@ class UserControllerTest {
             .id(1L)
             .name("Dominika")
             .playlists(List.of(PLAYLIST_ONE_WITH_ID, PLAYLIST_TWO_WITH_ID))
+            .build();
+    private static final User USER_TWO = User.builder()
+            .id(2L)
+            .name("Domi")
             .build();
     private UserService userServiceMock;
     private UserController userController;
@@ -47,16 +53,63 @@ class UserControllerTest {
         //then
         assertAll(
                 () -> Mockito.verify(userServiceMock).addUser(USER_ONE),
-                () -> Assertions.assertEquals(1L, actual)
+                () -> assertEquals(1L, actual)
         );
     }
 
     @Test
     void shouldDeleteUser() {
         //given,when
-        userController.deleteSongById(USER_ONE.getId());
+        userController.deleteUserById(USER_ONE.getId());
 
         //then
         Mockito.verify(userServiceMock).deleteUserById(USER_ONE.getId());
+    }
+
+    @Test
+    void shouldGetPlaylist() {
+        //given
+        when(userServiceMock.getPlaylist(USER_ONE.getId(), PLAYLIST_ONE_WITH_ID.getId()))
+                .thenReturn(Optional.of(PLAYLIST_ONE_WITH_ID));
+
+        //when
+        Optional<Playlist> actual = userController.showPlaylistById(USER_ONE.getId(), PLAYLIST_ONE_WITH_ID.getId());
+
+        //then
+        assertAll(
+                () -> Mockito.verify(userServiceMock).getPlaylist(USER_ONE.getId(), PLAYLIST_ONE_WITH_ID.getId()),
+                () -> assertEquals(Optional.of(PLAYLIST_ONE_WITH_ID), actual)
+        );
+    }
+
+    @Test
+    void shouldGetAllPlaylist() {
+        //given
+        when(userServiceMock.getAllPlaylists(USER_ONE.getId()))
+                .thenReturn(List.of(PLAYLIST_ONE_WITH_ID, PLAYLIST_TWO_WITH_ID));
+
+        //when
+        List<Playlist> actual = userController.showAllPlaylists(USER_ONE.getId());
+
+        //then
+        assertAll(
+                () -> Mockito.verify(userServiceMock).getAllPlaylists(USER_ONE.getId()),
+                () -> assertEquals(List.of(PLAYLIST_ONE_WITH_ID, PLAYLIST_TWO_WITH_ID), actual)
+        );
+    }
+
+    @Test
+    void shouldReturnEmptyList_whenNoPlaylistsWereFound() {
+        //given
+        when(userServiceMock.getAllPlaylists(USER_ONE.getId())).thenReturn(Collections.emptyList());
+
+        //when
+        List<Playlist> actual = userController.showAllPlaylists(USER_ONE.getId());
+
+        //then
+        assertAll(
+                () -> Mockito.verify(userServiceMock).getAllPlaylists(USER_ONE.getId()),
+                () -> assertEquals(Collections.emptyList(), actual)
+        );
     }
 }
